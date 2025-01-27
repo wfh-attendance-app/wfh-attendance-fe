@@ -29,7 +29,7 @@ const LoginPage = () => {
       localStorage.setItem('token', token);
       
       toast.success('🎉 Login successful!', { position: 'top-right', theme: 'colored' });
-      setTimeout(() => router.push('/'), 2000);
+      setTimeout(() => router.push('/main/attendance'), 2000);
     } catch (err: any) {
       toast.error('❌ ' + (err.response?.data?.error || 'Invalid credentials!'), { position: 'top-right', theme: 'colored' });
     } finally {
