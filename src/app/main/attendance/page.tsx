@@ -1,5 +1,6 @@
 'use client';
 
+import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect, useRef } from "react";
 
 const AttendanceTracker = () => {
@@ -7,7 +8,6 @@ const AttendanceTracker = () => {
     const [clockInTime, setClockInTime] = useState<string | null>(null);
     const [clockOutTime, setClockOutTime] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [photo, setPhoto] = useState<File | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -17,7 +17,7 @@ const AttendanceTracker = () => {
 
     const fetchAttendanceStatus = async () => {
         if (!token) {
-            setError("No authentication token found.");
+            toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
             return;
         }
 
@@ -45,7 +45,7 @@ const AttendanceTracker = () => {
                 setAttendanceStatus("not_recorded");
             }
         } catch (err) {
-            setError("Failed to fetch attendance status");
+            toast.error('❌ ' + "Failed to fetch attendance status", { position: 'top-right', theme: 'colored' });
         } finally {
             setLoading(false);
         }
@@ -80,11 +80,11 @@ const AttendanceTracker = () => {
 
     const handleClockIn = async () => {
         if (!token) {
-            setError("No authentication token found.");
+            toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
             return;
         }
         if (!photo) {
-            setError("Please take a photo before clocking in.");
+            toast.error("Please take a photo before clocking in.", { position: 'top-right', theme: 'colored' });
             return;
         }
 
@@ -110,7 +110,7 @@ const AttendanceTracker = () => {
             // **Re-fetch attendance status to ensure UI updates**
             fetchAttendanceStatus();
         } catch (err) {
-            setError("Failed to clock in");
+            toast.error('❌ ' + "Failed to clock in", { position: 'top-right', theme: 'colored' });
         } finally {
             setLoading(false);
         }
@@ -118,7 +118,7 @@ const AttendanceTracker = () => {
 
     const handleClockOut = async () => {
         if (!token) {
-            setError("No authentication token found.");
+          toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
             return;
         }
 
@@ -140,7 +140,7 @@ const AttendanceTracker = () => {
             // **Re-fetch attendance status to update UI**
             fetchAttendanceStatus();
         } catch (err) {
-            setError("Failed to clock out");
+            toast.error('❌ ' + "Failed to clock out", { position: 'top-right', theme: 'colored' });
         } finally {
             setLoading(false);
         }
@@ -148,8 +148,9 @@ const AttendanceTracker = () => {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+          <ToastContainer autoClose={3000} />
             <h2 className="text-2xl font-semibold mb-4">Attendance Tracker</h2>
-            {error && <p className="text-red-500">{error}</p>}
+            {/* {error && <p className="text-red-500">{error}</p>} */}
             
             {loading ? (
                 <button className="bg-gray-500 text-white px-4 py-2 rounded" disabled>
