@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -6,23 +6,24 @@ import axios from "axios";
 import Header from "@/components/Header";
 
 interface EmployeeDetail {
-    id: string;
-    name: string;
-    email: string;
-    position: string;
-    department: string;
-    joined_at: string;
-    status: string;
-    address: string;
-    phone: string;
-    profile_photo_url: string;
-  }
+  id: string;
+  name: string;
+  email: string;
+  position: string;
+  department: string;
+  joined_at: string;
+  status: string;
+  address: string;
+  phone: string;
+  profile_photo_url: string;
+}
 
 const EmployeeDetails = () => {
   const searchParams = useSearchParams();
   const employeeId = searchParams.get("id");
-  
-  const [employee, setEmployee] = useState<EmployeeDetail | undefined>(undefined);
+
+  const [employee, setEmployee] = useState<EmployeeDetail | null>(null);
+  const [originalEmployee, setOriginalEmployee] = useState<EmployeeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,13 +35,11 @@ const EmployeeDetails = () => {
     const fetchEmployee = async () => {
       try {
         const response = await axios.get(`http://35.232.21.216:4001/api/admin/employee/${employeeId}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setEmployee(response.data.employee);
-      } catch (err) {
+        setOriginalEmployee(response.data.employee); // Store original data
+      } catch (err: any) {
         setError("Failed to fetch employee details.");
       } finally {
         setLoading(false);
@@ -50,17 +49,94 @@ const EmployeeDetails = () => {
     fetchEmployee();
   }, [employeeId]);
 
-  if (!employeeId) return <p className="text-red-500">No employee selected.</p>;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (!employee) return;
+    setEmployee({ ...employee, [e.target.name]: e.target.value });
+  };
+
+  // Check if data was changed
+  const hasChanges = JSON.stringify(employee) !== JSON.stringify(originalEmployee);
+
+  const handleSave = async () => {
+    if (!employee) return;
+
+    try {
+      await axios.put(
+        `http://35.232.21.216:4001/api/admin/employee/${employee.id}`,
+        {
+          name: employee.name,
+          position: employee.position,
+          department: employee.department,
+          joined_at: employee.joined_at,
+          status: employee.status,
+          address: employee.address,
+          phone: employee.phone,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setOriginalEmployee(employee); // Update original data after saving
+      alert("Employee details updated successfully!");
+    } catch (err) {
+      alert("Failed to update employee details.");
+    }
+  };
+
   if (loading) return <p>Loading employee details...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
       <Header />
-      <div className="p-6 max-w-3xl mx-auto bg-white text-black rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold">{employee?.name}</h1>
-        <p className="text-gray-600">{employee?.position}</p>
-        <img src={employee?.profile_photo_url || "/default-profile.jpg"} alt={employee?.name} className="w-32 h-32 rounded-full mt-4" />
+      <div className="max-w-3xl mx-auto bg-white text-black rounded-lg shadow-lg p-6 mt-8">
+        <div className="flex items-center gap-4">
+          <img src={employee?.profile_photo_url || "/default-profile.jpg"} alt={employee?.name} className="w-24 h-24 rounded-full" />
+          <div>
+            <h1 className="text-2xl font-bold">{employee?.name}</h1>
+            <p className="text-gray-600">{employee?.email}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mt-6">
+          <div>
+            <label className="block font-medium">Position</label>
+            <input type="text" name="position" value={employee?.position} onChange={handleChange} className="border p-2 w-full rounded" />
+          </div>
+
+          <div>
+            <label className="block font-medium">Department</label>
+            <input type="text" name="department" value={employee?.department} onChange={handleChange} className="border p-2 w-full rounded" />
+          </div>
+
+          <div>
+            <label className="block font-medium">Joined At</label>
+            <input type="date" name="joined_at" value={employee?.joined_at.split("T")[0]} onChange={handleChange} className="border p-2 w-full rounded" />
+          </div>
+
+          <div>
+            <label className="block font-medium">Status</label>
+            <select name="status" value={employee?.status} onChange={handleChange} className="border p-2 w-full rounded">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="On Leave">On Leave</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium">Address</label>
+            <input type="text" name="address" value={employee?.address} onChange={handleChange} className="border p-2 w-full rounded" />
+          </div>
+
+          <div>
+            <label className="block font-medium">Phone</label>
+            <input type="text" name="phone" value={employee?.phone} onChange={handleChange} className="border p-2 w-full rounded" />
+          </div>
+        </div>
+
+        {hasChanges && (
+          <button onClick={handleSave} className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Save Changes
+          </button>
+        )}
       </div>
     </div>
   );
