@@ -1,7 +1,8 @@
 'use client';
 
-import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 
 const AttendanceTracker = () => {
     const [attendanceStatus, setAttendanceStatus] = useState<"clocked_in" | "clocked_out" | "not_recorded" | null>(null);
@@ -12,40 +13,33 @@ const AttendanceTracker = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [showCamera, setShowCamera] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     const fetchAttendanceStatus = async () => {
         if (!token) {
-            toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ No authentication token found.", { position: "top-right", theme: "colored" });
             return;
         }
 
         setLoading(true);
         try {
-            const response = await fetch("http://35.193.28.139:4002/api/employee/attendance/status", {
-                method: "GET",
+            const response = await axios.get("http://35.193.28.139:4002/api/employee/attendance/status", {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            if (!response.ok) throw new Error("Failed to fetch attendance status");
+            if (response.status !== 200) throw new Error("Failed to fetch attendance status");
 
-            const data = await response.json();
-            if (data.status === "clocked_in") {
-                setAttendanceStatus("clocked_in");
-                setClockInTime(data.clock_in_time);
-            } else if (data.status === "clocked_out") {
-                setAttendanceStatus("clocked_out");
-                setClockInTime(data.clock_in_time);
-                setClockOutTime(data.clock_out_time);
-            } else {
-                setAttendanceStatus("not_recorded");
-            }
+            const data = response.data;
+            setAttendanceStatus(data.status);
+            setClockInTime(data.clock_in_time || null);
+            setClockOutTime(data.clock_out_time || null);
         } catch (err) {
-            toast.error('❌ ' + "Failed to fetch attendance status", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ Failed to fetch attendance status", { position: "top-right", theme: "colored" });
         } finally {
             setLoading(false);
         }
@@ -54,6 +48,14 @@ const AttendanceTracker = () => {
     useEffect(() => {
         fetchAttendanceStatus();
     }, [token]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);    
 
     const startCamera = async () => {
         setShowCamera(true);
@@ -80,11 +82,11 @@ const AttendanceTracker = () => {
 
     const handleClockIn = async () => {
         if (!token) {
-            toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ No authentication token found.", { position: "top-right", theme: "colored" });
             return;
         }
         if (!photo) {
-            toast.error("Please take a photo before clocking in.", { position: 'top-right', theme: 'colored' });
+            toast.error("Please take a photo before clocking in.", { position: "top-right", theme: "colored" });
             return;
         }
 
@@ -93,23 +95,22 @@ const AttendanceTracker = () => {
             const formData = new FormData();
             formData.append("photo", photo);
 
-            const response = await fetch("http://35.193.28.139:4002/api/employee/attendance/clock-in", { 
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error("Clock-in failed");
-
-            const data = await response.json();
+            const response = await axios.post(
+                "http://35.193.28.139:4002/api/employee/attendance/clock-in",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        
+            const data = response.data;
             setAttendanceStatus("clocked_in");
             setClockInTime(data.attendance.clock_in);
-
             fetchAttendanceStatus();
         } catch (err) {
-            toast.error('❌ ' + "Failed to clock in", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ Failed to clock in", { position: "top-right", theme: "colored" });
         } finally {
             setLoading(false);
         }
@@ -117,90 +118,96 @@ const AttendanceTracker = () => {
 
     const handleClockOut = async () => {
         if (!token) {
-          toast.error('❌ ' + "No authentication token found.", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ No authentication token found.", { position: "top-right", theme: "colored" });
             return;
         }
 
         setLoading(true);
         try {
-            const response = await fetch("http://35.193.28.139:4002/api/employee/attendance/clock-out", { 
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) throw new Error("Clock-out failed");
-
-            const data = await response.json();
+            const response = await axios.post(
+                "http://35.193.28.139:4002/api/employee/attendance/clock-out",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        
+            const data = response.data;
             setAttendanceStatus("clocked_out");
             setClockOutTime(data.attendance.clock_out);
-
             fetchAttendanceStatus();
         } catch (err) {
-            toast.error('❌ ' + "Failed to clock out", { position: 'top-right', theme: 'colored' });
+            toast.error("❌ Failed to clock out", { position: "top-right", theme: "colored" });
         } finally {
             setLoading(false);
         }
     };
 
+    const formatTime = (time: string | null) => (time ? new Date(time).toLocaleTimeString() : "-");
+
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-          <ToastContainer autoClose={3000} />
-            <h2 className="text-3xl font-semibold mb-6">Attendance Tracker</h2>
-            
-            {loading ? (
-                <button className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-md opacity-70" disabled>
-                    Loading...
-                </button>
-            ) : attendanceStatus === "not_recorded" ? (
-                <>
-                    {showCamera ? (
-                        <div className="flex flex-col items-center">
-                            <video ref={videoRef} autoPlay className="w-64 h-48 border border-gray-300 rounded-lg shadow-md"></video>
-                            <button 
-                                onClick={capturePhoto} 
-                                className="mt-3 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
-                            >
-                                Capture Photo
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            {photo ? (
-                                <img src={URL.createObjectURL(photo)} alt="Captured" className="w-32 h-32 border border-white rounded-lg shadow-md" />
-                            ) : (
-                                <button 
-                                    onClick={startCamera} 
-                                    className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-600 transition"
-                                >
-                                    Open Camera
+        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+            <ToastContainer autoClose={3000} />
+            <h2 className="text-2xl font-semibold mb-4">Attendance Tracker</h2>
+            <h3 className="text-xl font-semibold mb-4">{currentTime.toLocaleTimeString()}</h3>
+
+            {/* Attendance Table */}
+            <table className="border-collapse border border-gray-300 bg-white shadow-lg rounded-lg w-3/4 mt-6">
+                <thead>
+                    <tr className="bg-blue-500 text-white">
+                        <th className="border border-gray-300 px-4 py-2">Date</th>
+                        <th className="border border-gray-300 px-4 py-2">Clock In Time</th>
+                        <th className="border border-gray-300 px-4 py-2">Clock Out Time</th>
+                        <th className="border border-gray-300 px-4 py-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr className="text-center bg-gray-200 text-black">
+                        <td className="border border-gray-300 px-4 py-2">{new Date().toLocaleDateString()}</td>
+                        <td className="border border-gray-300 px-4 py-2">{formatTime(clockInTime)}</td>
+                        <td className="border border-gray-300 px-4 py-2">{formatTime(clockOutTime)}</td>
+                        <td className="border border-gray-300 px-4 py-2">{attendanceStatus?.replace("_", " ") || "-"}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div className="flex my-5 flex-col items-center">
+                {loading ? (
+                    <button className="bg-gray-500 text-white px-4 py-2 rounded" disabled>Loading...</button>
+                ) : attendanceStatus === "not_recorded" ? (
+                    <>
+                        {showCamera ? (
+                            <div className="flex flex-col items-center">
+                                <video ref={videoRef} autoPlay className="w-64 h-48 border border-gray-300 rounded-md"></video>
+                                <button onClick={capturePhoto} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition">
+                                    Capture Photo
                                 </button>
-                            )}
-                            <button 
-                                onClick={handleClockIn} 
-                                className="mt-3 bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition"
-                            >
-                                Clock In
-                            </button>
-                        </>
-                    )}
-                </>
-            ) : attendanceStatus === "clocked_in" ? (
-                <div className="text-center">
-                    <p className="text-lg mb-4">You clocked in at {clockInTime ? new Date(clockInTime).toLocaleTimeString() : "N/A"}</p>
-                    <button 
-                        onClick={handleClockOut} 
-                        className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition"
-                    >
+                            </div>
+                        ) : (
+                            <>
+                                {photo ? (
+                                    <img src={URL.createObjectURL(photo)} alt="Captured" className="w-32 h-32 border rounded-md" />
+                                ) : (
+                                    <button onClick={startCamera} className="bg-gray-500 text-white px-6 py-3 rounded shadow-md hover:bg-gray-600 transition">
+                                        Open Camera
+                                    </button>
+                                )}
+                                <button onClick={handleClockIn} className="mt-2 bg-green-500 text-white px-6 py-3 rounded shadow-md hover:bg-green-600 transition">
+                                    Clock In
+                                </button>
+                            </>
+                        )}
+                    </>
+                ) : attendanceStatus === "clocked_in" ? (
+                    <button onClick={handleClockOut} className="bg-red-500 text-white px-6 py-3 rounded shadow-md hover:bg-red-600 transition">
                         Clock Out
                     </button>
-                </div>
-            ) : (
-                <p className="text-lg text-gray-200">You've already recorded attendance today.</p>
-            )}
-
-            <canvas ref={canvasRef} width="640" height="480" className="hidden"></canvas>
+                ) : (
+                    <p className="text-lg">You've already recorded attendance today.</p>
+                )}
+            </div>
         </div>
     );
 };
