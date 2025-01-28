@@ -11,12 +11,12 @@ interface EmployeeDetail {
   id: string;
   name: string;
   email: string;
-  position: string | '';
-  department: string | '';
-  joined_at: string | '';
-  status: string | '';
-  address: string | '';
-  phone: string | '';
+  position: string;
+  department: string;
+  joined_at: string;
+  status: string;
+  address: string;
+  phone: string;
   profile_photo_url: string;
 }
 
@@ -103,22 +103,45 @@ const EmployeeDetails = () => {
         <div className="grid grid-cols-2 gap-4 mt-6">
           <div>
             <label className="block font-medium">Position</label>
-            <input type="text" name="position" value={employee?.position} onChange={handleChange} className="border p-2 w-full rounded" />
+            <input
+              type="text"
+              name="position"
+              value={employee?.position || ""}
+              onChange={handleChange}
+              className="border p-2 w-full rounded"
+            />
           </div>
 
           <div>
             <label className="block font-medium">Department</label>
-            <input type="text" name="department" value={employee?.department} onChange={handleChange} className="border p-2 w-full rounded" />
+            <input
+              type="text"
+              name="department"
+              value={employee?.department || ""}
+              onChange={handleChange}
+              className="border p-2 w-full rounded"
+            />
           </div>
 
           <div>
             <label className="block font-medium">Joined At</label>
-            <input type="date" name="joined_at" value={employee?.joined_at ? employee.joined_at.split("T")[0] : ""} className="border p-2 w-full rounded" />
+            <input
+              type="date"
+              name="joined_at"
+              value={employee?.joined_at ? employee.joined_at.split("T")[0] : ""}
+              onChange={handleChange} // Added an onChange handler
+              className="border p-2 w-full rounded"
+            />
           </div>
 
           <div>
             <label className="block font-medium">Status</label>
-            <select name="status" value={employee?.status} onChange={handleChange} className="border p-2 w-full rounded">
+            <select
+              name="status"
+              value={employee?.status || ""}
+              onChange={handleChange}
+              className="border p-2 w-full rounded"
+            >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -126,14 +149,27 @@ const EmployeeDetails = () => {
 
           <div>
             <label className="block font-medium">Address</label>
-            <input type="text" name="address" value={employee?.address} onChange={handleChange} className="border p-2 w-full rounded" />
+            <input
+              type="text"
+              name="address"
+              value={employee?.address || ""}
+              onChange={handleChange}
+              className="border p-2 w-full rounded"
+            />
           </div>
 
           <div>
             <label className="block font-medium">Phone</label>
-            <input type="text" name="phone" value={employee?.phone} onChange={handleChange} className="border p-2 w-full rounded" />
+            <input
+              type="text"
+              name="phone"
+              value={employee?.phone || ""}
+              onChange={handleChange}
+              className="border p-2 w-full rounded"
+            />
           </div>
         </div>
+
 
         <div className="mt-6 flex gap-4">
           {hasChanges && (
