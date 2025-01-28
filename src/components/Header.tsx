@@ -48,7 +48,7 @@ const Header = () => {
       <a href="/main" className="hover:underline">Home</a>
       <a href="/main/attendance" className="hover:underline">Attendance</a>
       {user?.role === "admin" && (
-        <a href="/main/monitor" className="hover:underline">Monitor Employees</a>
+        <a href="/main/monitor" className="hover:underline">Employees</a>
       )}
       </nav>
 
