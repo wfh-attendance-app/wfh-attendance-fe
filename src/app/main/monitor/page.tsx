@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import Header from '@/components/Header';
+import Header from "@/components/Header";
 
 interface Employee {
   id: string;
   name: string;
   position: string;
-  photo: string;
+  profile_photo_url: string;
 }
 
 const Employees = () => {
@@ -42,31 +42,44 @@ const Employees = () => {
     fetchEmployees();
   }, []);
 
-  if (loading) return <p>Loading employees...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600">
+        <p className="text-lg text-white animate-pulse">Loading employees...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600">
+        <p className="text-red-200 text-lg">{error}</p>
+      </div>
+    );
 
   return (
     <div className="h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
       <Header />
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Employee Monitoring</h1>
-        <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h1 className="text-3xl font-bold mb-6 text-center">Employee Monitoring</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {employees.map((employee) => (
-            <li
+            <div
               key={employee.id}
-              className="p-4 bg-gray-100 rounded-lg shadow-md cursor-pointer hover:bg-gray-200"
+              className="p-6 bg-white bg-opacity-20 rounded-xl shadow-lg backdrop-blur-md cursor-pointer transform transition-all hover:scale-105 hover:bg-opacity-30 hover:shadow-2xl"
               onClick={() => router.push(`/employees/${employee.id}`)}
             >
-              <img
-                src={employee.photo || "https://i.ibb.co.com/8DN9FtF/default-profile-photo.jpg"}
-                alt={`${employee.name}'s photo`}
-                className="w-16 h-16 rounded-full mb-2"
-              />
-              <h2 className="text-lg text-black font-semibold">{employee.name}</h2>
-              <p className="text-gray-600">{employee.position}</p>
-            </li>
+              <div className="flex flex-col items-center">
+                <img
+                  src={employee.profile_photo_url || "https://i.ibb.co.com/8DN9FtF/default-profile-photo.jpg"}
+                  alt={`${employee.name}'s photo`}
+                  className="w-24 h-24 object-cover rounded-full border-4 border-white transition-transform hover:scale-110"
+                />
+                <h2 className="text-xl font-semibold mt-4">{employee.name}</h2>
+                <p className="text-indigo-200">{employee.position}</p>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
