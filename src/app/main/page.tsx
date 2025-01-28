@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import Header from '@/components/Header';
 
@@ -18,16 +19,15 @@ const RoleValidationPage = () => {
     // Fetch user role from API
     const fetchRole = async () => {
       try {
-        const response = await fetch("http://34.122.21.18:4000/api/auth/profile", {
-          method: "GET",
+        const response = await axios.get("http://34.122.21.18:4000/api/auth/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) throw new Error("Failed to fetch user data");
+        if (response.status !== 200) throw new Error("Failed to fetch user data");
 
-        const data = await response.json();
+        const data = response.data;
         setRole(data.role);
       } catch (err) {
         console.error("Error fetching role:", err);
@@ -66,7 +66,7 @@ const RoleValidationPage = () => {
               className="bg-green-500 text-white px-6 py-3 rounded shadow-md hover:bg-green-600 transition"
               onClick={() => router.push("/main/monitor")}
             >
-              View Attendances
+              Monitor Employees
             </button>
           </div>
         )}
