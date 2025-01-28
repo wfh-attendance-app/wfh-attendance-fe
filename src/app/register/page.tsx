@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiConfig from '@/config/apiConfig';
 
 import InputField from '@/components/auth/InputField';
 import Button from '@/components/auth/Button';
@@ -29,7 +30,7 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      await axios.post('http://34.122.21.18:4000/api/auth/register', formData);
+      await axios.post(`${apiConfig.auth}/register`, formData);
       toast.success('🎉 Registration successful!', { position: 'top-right', theme: 'colored' });
       setTimeout(() => router.push('/login'), 2000);
     } catch (err: any) {

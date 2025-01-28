@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Header from '@/components/Header';
+import apiConfig from "@/config/apiConfig";
 
 const RoleValidationPage = () => {
   const [role, setRole] = useState<"employee" | "admin" | null>(null);
@@ -19,7 +20,7 @@ const RoleValidationPage = () => {
     // Fetch user role from API
     const fetchRole = async () => {
       try {
-        const response = await axios.get("http://34.122.21.18:4000/api/auth/profile", {
+        const response = await axios.get(`${apiConfig.auth}/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiConfig from '@/config/apiConfig';
 
 import InputField from '@/components/auth/InputField';
 import Button from '@/components/auth/Button';
@@ -24,7 +25,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://34.122.21.18:4000/api/auth/login', formData);
+      const response = await axios.post(`${apiConfig.auth}/login`, formData);
       const { token } = response.data;
       localStorage.setItem('token', token);
       

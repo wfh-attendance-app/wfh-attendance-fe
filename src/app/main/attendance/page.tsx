@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import axios from "axios";
+import apiConfig from "@/config/apiConfig";
 
 const AttendanceTracker = () => {
   const [attendanceStatus, setAttendanceStatus] = useState<"clocked_in" | "clocked_out" | "not_recorded" | null>(null);
@@ -28,7 +29,7 @@ const AttendanceTracker = () => {
 
     setLoading(true);
     try {
-      const response = await axios.get("http://35.193.28.139:4002/api/employee/attendance/status", {
+      const response = await axios.get(`${apiConfig.attendance}/status`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -99,7 +100,7 @@ const AttendanceTracker = () => {
       formData.append("photo", photo);
 
       const response = await axios.post(
-        "http://35.193.28.139:4002/api/employee/attendance/clock-in",
+        `${apiConfig.attendance}/clock-in`,
         formData,
         {
           headers: {
@@ -129,7 +130,7 @@ const AttendanceTracker = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://35.193.28.139:4002/api/employee/attendance/clock-out",
+        `${apiConfig.attendance}/clock-out`,
         {},
         {
           headers: {

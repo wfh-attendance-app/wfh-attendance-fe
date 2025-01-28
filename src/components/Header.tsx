@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import apiConfig from "@/config/apiConfig";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -16,7 +17,7 @@ const Header = () => {
 
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get("http://34.122.21.18:4000/api/auth/profile", {
+        const response = await axios.get(`${apiConfig.auth}/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
