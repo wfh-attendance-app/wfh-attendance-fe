@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import axios from "axios";
 
@@ -15,12 +16,13 @@ const AttendanceTracker = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const router = useRouter();
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const fetchAttendanceStatus = async () => {
     if (!token) {
-      toast.error("❌ No authentication token found.", { position: "top-right", theme: "colored" });
+      router.push("/login");
       return;
     }
 
