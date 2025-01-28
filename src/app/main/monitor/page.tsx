@@ -18,6 +18,10 @@ const Employees = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  const goToDetails = (employeeId: string) => {
+    router.push(`/main/monitor/details?id=${employeeId}`);
+  };
+
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   useEffect(() => {
@@ -66,7 +70,7 @@ const Employees = () => {
             <div
               key={employee.id}
               className="p-6 bg-white bg-opacity-20 rounded-xl shadow-lg backdrop-blur-md cursor-pointer transform transition-all hover:scale-105 hover:bg-opacity-30 hover:shadow-2xl"
-              onClick={() => router.push(`/employees/${employee.id}`)}
+              onClick={() => goToDetails(employee.id)}
             >
               <div className="flex flex-col items-center">
                 <img
