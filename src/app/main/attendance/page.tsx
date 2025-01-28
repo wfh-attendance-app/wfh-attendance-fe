@@ -16,7 +16,7 @@ const AttendanceTracker = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const router = useRouter();
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -54,10 +54,15 @@ const AttendanceTracker = () => {
   }, [token]);
 
   useEffect(() => {
+    // Set the initial time on the client
+    setCurrentTime(new Date());
+
+    // Update the time every second
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
+    // Cleanup interval on unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -151,7 +156,9 @@ const AttendanceTracker = () => {
     }
   };
 
-  const formatTime = (time: string | null) => (time ? new Date(time).toLocaleTimeString() : "-");
+  const formatDate = (date: Date) => date.toLocaleDateString("en-GB"); // Use a consistent locale
+  const formatTime = (time: string | null) =>
+    time ? new Date(time).toLocaleTimeString("en-GB") : "-";
 
   return (
     <div className="h-screen">
@@ -159,7 +166,7 @@ const AttendanceTracker = () => {
       <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
         <ToastContainer autoClose={3000} />
         <h2 className="text-2xl font-semibold mb-4">Attendance Tracker</h2>
-        <h3 className="text-xl font-semibold mb-4">{currentTime.toLocaleTimeString()}</h3>
+        <h3 className="text-xl font-semibold mb-4">{currentTime ? currentTime.toLocaleTimeString() : "Loading..."}</h3>
 
         {/* Attendance Table */}
         <table className="border-collapse border border-gray-300 bg-white shadow-lg rounded-lg w-3/4 mt-6">
@@ -173,7 +180,7 @@ const AttendanceTracker = () => {
           </thead>
           <tbody>
             <tr className="text-center bg-gray-200 text-black">
-              <td className="border border-gray-300 px-4 py-2">{new Date().toLocaleDateString()}</td>
+              <td className="border border-gray-300 px-4 py-2">{currentTime ? formatDate(currentTime) : "-"}</td>
               <td className="border border-gray-300 px-4 py-2">{formatTime(clockInTime)}</td>
               <td className="border border-gray-300 px-4 py-2">{formatTime(clockOutTime)}</td>
               <td className="border border-gray-300 px-4 py-2">{attendanceStatus?.replace("_", " ") || "-"}</td>
