@@ -115,6 +115,7 @@ const AttendanceTracker = () => {
     } catch (err) {
       toast.error("❌ Failed to clock in", { position: "top-right", theme: "colored" });
     } finally {
+      toast.success("You have clocked in succesfully", { position: "top-right", theme: "colored" });
       setLoading(false);
     }
   };
@@ -144,6 +145,7 @@ const AttendanceTracker = () => {
     } catch (err) {
       toast.error("❌ Failed to clock out", { position: "top-right", theme: "colored" });
     } finally {
+      toast.success("You have clocked out succesfully", { position: "top-right", theme: "colored" });
       setLoading(false);
     }
   };
@@ -185,8 +187,21 @@ const AttendanceTracker = () => {
             <>
               {showCamera ? (
                 <div className="flex flex-col items-center">
-                  <video ref={videoRef} autoPlay className="w-64 h-48 border border-gray-300 rounded-md"></video>
-                  <button onClick={capturePhoto} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    className="w-64 h-48 border border-gray-300 rounded-md"
+                  ></video>
+                  <canvas
+                    ref={canvasRef}
+                    className="hidden"
+                    width={640}
+                    height={480}
+                  ></canvas>
+                  <button
+                    onClick={capturePhoto}
+                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition"
+                  >
                     Capture Photo
                   </button>
                 </div>
