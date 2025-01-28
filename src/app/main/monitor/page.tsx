@@ -57,7 +57,7 @@ const Employees = () => {
     );
 
   return (
-    <div className="h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
       <Header />
       <div className="p-6">
         <h1 className="text-3xl font-bold mb-6 text-center">Employee Monitoring</h1>
