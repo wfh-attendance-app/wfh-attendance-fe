@@ -107,7 +107,6 @@ const AttendanceTracker = () => {
             setAttendanceStatus("clocked_in");
             setClockInTime(data.attendance.clock_in);
 
-            // **Re-fetch attendance status to ensure UI updates**
             fetchAttendanceStatus();
         } catch (err) {
             toast.error('❌ ' + "Failed to clock in", { position: 'top-right', theme: 'colored' });
@@ -137,7 +136,6 @@ const AttendanceTracker = () => {
             setAttendanceStatus("clocked_out");
             setClockOutTime(data.attendance.clock_out);
 
-            // **Re-fetch attendance status to update UI**
             fetchAttendanceStatus();
         } catch (err) {
             toast.error('❌ ' + "Failed to clock out", { position: 'top-right', theme: 'colored' });
@@ -147,34 +145,42 @@ const AttendanceTracker = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white">
           <ToastContainer autoClose={3000} />
-            <h2 className="text-2xl font-semibold mb-4">Attendance Tracker</h2>
-            {/* {error && <p className="text-red-500">{error}</p>} */}
+            <h2 className="text-3xl font-semibold mb-6">Attendance Tracker</h2>
             
             {loading ? (
-                <button className="bg-gray-500 text-white px-4 py-2 rounded" disabled>
+                <button className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-md opacity-70" disabled>
                     Loading...
                 </button>
             ) : attendanceStatus === "not_recorded" ? (
                 <>
                     {showCamera ? (
                         <div className="flex flex-col items-center">
-                            <video ref={videoRef} autoPlay className="w-64 h-48 border border-gray-300 rounded-md"></video>
-                            <button onClick={capturePhoto} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition">
+                            <video ref={videoRef} autoPlay className="w-64 h-48 border border-gray-300 rounded-lg shadow-md"></video>
+                            <button 
+                                onClick={capturePhoto} 
+                                className="mt-3 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
+                            >
                                 Capture Photo
                             </button>
                         </div>
                     ) : (
                         <>
                             {photo ? (
-                                <img src={URL.createObjectURL(photo)} alt="Captured" className="w-32 h-32 border rounded-md" />
+                                <img src={URL.createObjectURL(photo)} alt="Captured" className="w-32 h-32 border border-white rounded-lg shadow-md" />
                             ) : (
-                                <button onClick={startCamera} className="bg-gray-500 text-white px-6 py-3 rounded shadow-md hover:bg-gray-600 transition">
+                                <button 
+                                    onClick={startCamera} 
+                                    className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-600 transition"
+                                >
                                     Open Camera
                                 </button>
                             )}
-                            <button onClick={handleClockIn} className="mt-2 bg-green-500 text-white px-6 py-3 rounded shadow-md hover:bg-green-600 transition">
+                            <button 
+                                onClick={handleClockIn} 
+                                className="mt-3 bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition"
+                            >
                                 Clock In
                             </button>
                         </>
@@ -183,12 +189,15 @@ const AttendanceTracker = () => {
             ) : attendanceStatus === "clocked_in" ? (
                 <div className="text-center">
                     <p className="text-lg mb-4">You clocked in at {clockInTime ? new Date(clockInTime).toLocaleTimeString() : "N/A"}</p>
-                    <button onClick={handleClockOut} className="bg-red-500 text-white px-6 py-3 rounded shadow-md hover:bg-red-600 transition">
+                    <button 
+                        onClick={handleClockOut} 
+                        className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition"
+                    >
                         Clock Out
                     </button>
                 </div>
             ) : (
-                <p className="text-lg text-gray-700">You've already recorded attendance today.</p>
+                <p className="text-lg text-gray-200">You've already recorded attendance today.</p>
             )}
 
             <canvas ref={canvasRef} width="640" height="480" className="hidden"></canvas>
