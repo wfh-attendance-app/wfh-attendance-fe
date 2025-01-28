@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import InputField from '@/components/InputField';
-import Button from '@/components/Button';
-import FormContainer from '@/components/FormContainer';
+import InputField from '@/components/auth/InputField';
+import Button from '@/components/auth/Button';
+import FormContainer from '@/components/auth/FormContainer';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
