@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/Header";
 import { ToastContainer, toast } from 'react-toastify';
+import apiConfig from "@/config/apiConfig";
 
 interface EmployeeDetail {
   id: string;
@@ -37,7 +38,7 @@ const EmployeeDetails = () => {
 
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(`http://35.232.21.216:4001/api/admin/employee/${employeeId}`, {
+        const response = await axios.get(`${apiConfig.admin}/employee/${employeeId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEmployee(response.data.employee);
@@ -65,7 +66,7 @@ const EmployeeDetails = () => {
 
     try {
       await axios.put(
-        `http://35.232.21.216:4001/api/admin/employee/${employee.id}`,
+        `${apiConfig.admin}/employee/${employee.id}`,
         {
           name: employee.name,
           position: employee.position,

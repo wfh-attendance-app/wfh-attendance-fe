@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import axios from "axios";
+import apiConfig from "@/config/apiConfig";
 
 interface AttendanceRecord {
   id: number;
@@ -41,7 +42,7 @@ const AttendanceDetails = () => {
     const fetchAttendance = async () => {
       try {
         const response = await axios.get(
-          `http://35.232.21.216:4001/api/admin/attendance/${id}`,
+          `${apiConfig.admin}/attendance/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

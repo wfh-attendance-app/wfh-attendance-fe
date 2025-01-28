@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/Header";
+import apiConfig from "@/config/apiConfig";
 
 interface Employee {
   id: string;
@@ -30,7 +31,7 @@ const Employees = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://35.232.21.216:4001/api/admin/employee", {
+        const response = await axios.get(`${apiConfig.admin}/employee`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
