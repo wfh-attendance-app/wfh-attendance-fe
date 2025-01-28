@@ -115,7 +115,7 @@ const AttendanceTracker = () => {
     } catch (err) {
       toast.error("❌ Failed to clock in", { position: "top-right", theme: "colored" });
     } finally {
-      toast.success("✅ You have clocked in succesfully", { position: "top-right", theme: "colored" });
+      toast.success("You have clocked in succesfully", { position: "top-right", theme: "colored" });
       setLoading(false);
     }
   };
@@ -145,7 +145,7 @@ const AttendanceTracker = () => {
     } catch (err) {
       toast.error("❌ Failed to clock out", { position: "top-right", theme: "colored" });
     } finally {
-      toast.success("✅ You have clocked out succesfully", { position: "top-right", theme: "colored" });
+      toast.success("You have clocked out succesfully", { position: "top-right", theme: "colored" });
       setLoading(false);
     }
   };
