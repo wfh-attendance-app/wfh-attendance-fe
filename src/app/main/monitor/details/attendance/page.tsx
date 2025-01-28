@@ -25,8 +25,13 @@ const AttendanceDetails = () => {
   const id = searchParams.get("id");
   const router = useRouter();
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [filteredAttendance, setFilteredAttendance] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -44,6 +49,7 @@ const AttendanceDetails = () => {
           }
         );
         setAttendance(response.data.attendance);
+        setFilteredAttendance(response.data.attendance);
         setLoading(false);
       } catch (err: any) {
         if (err.response && err.response.status === 404) {
@@ -58,6 +64,27 @@ const AttendanceDetails = () => {
     fetchAttendance();
   }, [id]);
 
+  useEffect(() => {
+    let filtered = attendance;
+
+    if (dateStart && dateEnd) {
+      filtered = filtered.filter(record => {
+        const recordDate = new Date(record.clock_in).toISOString().split("T")[0];
+        return recordDate >= dateStart && recordDate <= dateEnd;
+      });
+    }
+
+    if (statusFilter) {
+      filtered = filtered.filter(record => {
+        if (statusFilter === "clocked_in") return record.clock_out === null;
+        if (statusFilter === "clocked_out") return record.clock_out !== null;
+        return true;
+      });
+    }
+
+    setFilteredAttendance(filtered);
+  }, [dateStart, dateEnd, statusFilter, attendance]);
+
   if (loading)
     return <p className="text-center text-white text-xl mt-10">Loading attendance records...</p>;
   if (error)
@@ -68,17 +95,60 @@ const AttendanceDetails = () => {
       <Header />
       <div className="w-full max-w-4xl p-6">
         <h1 className="text-3xl font-bold mb-6 text-center">Attendance Records</h1>
-        {attendance.length === 0 ? (
+
+        {attendance.length > 0 && (
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-semibold">{attendance[0]?.user.name}</h2>
+            <p className="text-lg">
+              {attendance[0]?.user.position || "No Position"} • {attendance[0]?.user.department || "No Department"}
+            </p>
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 mb-6 justify-center">
+          {/* Start Date Filter */}
+          <div className="flex flex-col text-black">
+            <label className="text-white mb-1 font-medium">Start Date</label>
+            <input
+              type="date"
+              value={dateStart}
+              onChange={(e) => setDateStart(e.target.value)}
+              className="px-4 py-1 border rounded-md"
+            />
+          </div>
+
+          {/* End Date Filter */}
+          <div className="flex flex-col text-black">
+            <label className="text-white mb-1 font-medium">End Date</label>
+            <input
+              type="date"
+              value={dateEnd}
+              onChange={(e) => setDateEnd(e.target.value)}
+              className="px-4 py-1 border rounded-md"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="flex flex-col text-black">
+            <label className="text-white mb-1 font-medium">Attendance Status</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border rounded-md"
+            >
+              <option value="">All Records</option>
+              <option value="clocked_in">Clocked In Only</option>
+              <option value="clocked_out">Clocked Out Only</option>
+            </select>
+          </div>
+        </div>
+
+
+        {filteredAttendance.length === 0 ? (
           <p className="text-center text-xl">No attendance records found.</p>
         ) : (
           <div className="overflow-x-auto bg-white rounded-lg shadow-lg p-4">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl text-black font-semibold">{attendance[0]?.user.name}</h2>
-              <p className="text-lg text-gray-900">
-                {attendance[0]?.user.position || "No Position"} • {attendance[0]?.user.department || "No Department"}
-              </p>
-            </div>
-
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-indigo-500 text-white">
@@ -89,7 +159,7 @@ const AttendanceDetails = () => {
                 </tr>
               </thead>
               <tbody>
-                {attendance.map((record) => (
+                {filteredAttendance.map((record) => (
                   <tr key={record.id} className="text-black bg-gray-100 border-b hover:bg-gray-200 transition">
                     <td className="p-3 text-center">
                       <div className="flex justify-center">
@@ -113,7 +183,6 @@ const AttendanceDetails = () => {
                 ))}
               </tbody>
             </table>
-
           </div>
         )}
       </div>
