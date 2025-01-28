@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import InputField from '@/components/InputField';
-import Button from '@/components/Button';
-import FormContainer from '@/components/FormContainer';
+import InputField from '@/components/auth/InputField';
+import Button from '@/components/auth/Button';
+import FormContainer from '@/components/auth/FormContainer';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -29,7 +29,7 @@ const LoginPage = () => {
       localStorage.setItem('token', token);
       
       toast.success('🎉 Login successful!', { position: 'top-right', theme: 'colored' });
-      setTimeout(() => router.push('/main/attendance'), 2000);
+      setTimeout(() => router.push('/main'), 2000);
     } catch (err: any) {
       toast.error('❌ ' + (err.response?.data?.error || 'Invalid credentials!'), { position: 'top-right', theme: 'colored' });
     } finally {
