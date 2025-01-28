@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/Header";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface EmployeeDetail {
   id: string;
@@ -77,9 +78,9 @@ const EmployeeDetails = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setOriginalEmployee(employee); // Update original data after saving
-      alert("Employee details updated successfully!");
+      toast.success("Employee updated successfully!", { position: 'top-right', theme: 'colored' })
     } catch (err) {
-      alert("Failed to update employee details.");
+      toast.error("❌ Failed to update employee.", { position: 'top-right', theme: 'colored' })
     }
   };
 
@@ -89,6 +90,7 @@ const EmployeeDetails = () => {
   return (
     <div className="h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
       <Header />
+      <ToastContainer autoClose={3000} />
       <div className="max-w-3xl mx-auto bg-white text-black rounded-lg shadow-lg p-6 mt-8">
         <div className="flex items-center gap-4">
           <img src={employee?.profile_photo_url || "/default-profile.jpg"} alt={employee?.name} className="w-24 h-24 rounded-full" />
