@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import axios from "axios";
 import apiConfig from "@/config/apiConfig";
+import {Suspense} from "react";
 
 interface AttendanceRecord {
   id: number;
@@ -24,12 +25,10 @@ interface AttendanceRecord {
 const AttendanceDetails = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const router = useRouter();
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [filteredAttendance, setFilteredAttendance] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -191,4 +190,12 @@ const AttendanceDetails = () => {
   );
 };
 
-export default AttendanceDetails;
+const Page = () => {
+  return (
+    <Suspense>
+      <AttendanceDetails/>
+    </Suspense>
+  )
+}
+
+export default Page;

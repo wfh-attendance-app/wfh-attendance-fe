@@ -7,6 +7,7 @@ import axios from "axios";
 import Header from "@/components/Header";
 import { ToastContainer, toast } from 'react-toastify';
 import apiConfig from "@/config/apiConfig";
+import {Suspense} from "react";
 
 interface EmployeeDetail {
   id: string;
@@ -191,4 +192,12 @@ const EmployeeDetails = () => {
   );
 };
 
-export default EmployeeDetails;
+const Page = () => {
+  return (
+    <Suspense>
+      <EmployeeDetails/>
+    </Suspense>
+  )
+}
+
+export default Page;
