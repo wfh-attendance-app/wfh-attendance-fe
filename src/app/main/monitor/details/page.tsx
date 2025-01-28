@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/Header";
 
@@ -9,12 +10,12 @@ interface EmployeeDetail {
   id: string;
   name: string;
   email: string;
-  position: string;
-  department: string;
-  joined_at: string;
-  status: string;
-  address: string;
-  phone: string;
+  position: string | '';
+  department: string | '';
+  joined_at: string | '';
+  status: string | '';
+  address: string | '';
+  phone: string | '';
   profile_photo_url: string;
 }
 
@@ -26,6 +27,7 @@ const EmployeeDetails = () => {
   const [originalEmployee, setOriginalEmployee] = useState<EmployeeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -109,15 +111,14 @@ const EmployeeDetails = () => {
 
           <div>
             <label className="block font-medium">Joined At</label>
-            <input type="date" name="joined_at" value={employee?.joined_at.split("T")[0]} onChange={handleChange} className="border p-2 w-full rounded" />
+            <input type="date" name="joined_at" value={employee?.joined_at ? employee.joined_at.split("T")[0] : ""} className="border p-2 w-full rounded" />
           </div>
 
           <div>
             <label className="block font-medium">Status</label>
             <select name="status" value={employee?.status} onChange={handleChange} className="border p-2 w-full rounded">
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="On Leave">On Leave</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
 
@@ -132,11 +133,20 @@ const EmployeeDetails = () => {
           </div>
         </div>
 
-        {hasChanges && (
-          <button onClick={handleSave} className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Save Changes
+        <div className="mt-6 flex gap-4">
+          {hasChanges && (
+            <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Save Changes
+            </button>
+          )}
+
+          <button
+            onClick={() => router.push(`/main/monitor/details/attendance?id=${employee?.id}`)}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            View Attendance
           </button>
-        )}
+        </div>
       </div>
     </div>
   );
