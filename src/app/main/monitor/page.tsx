@@ -9,6 +9,7 @@ interface Employee {
   id: string;
   name: string;
   position: string;
+  department: string;
   profile_photo_url: string;
 }
 
@@ -79,7 +80,7 @@ const Employees = () => {
                   className="w-24 h-24 object-cover rounded-full border-4 border-white transition-transform hover:scale-110"
                 />
                 <h2 className="text-xl font-semibold mt-4">{employee.name}</h2>
-                <p className="text-indigo-200">{employee.position}</p>
+                <p className="text-indigo-200">{employee.position || "No Position"} • {employee.department || "No Department"}</p>
               </div>
             </div>
           ))}
