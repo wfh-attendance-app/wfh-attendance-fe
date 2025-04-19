@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import * as faceapi from 'face-api.js';
 import apiConfig from '@/config/apiConfig';
 import GradientLayout from '@/components/GradientLayout';
@@ -109,25 +110,27 @@ const IdentifyPage = () => {
       if (!blob) return;
       const formData = new FormData();
       formData.append('file', blob, 'face.jpg');
-
+    
       try {
-        const res = await fetch(`${apiConfig.face_ai}/identify`, {
-          method: 'POST',
-          body: formData,
+        const res = await axios.post(`${apiConfig.face_ai}/identify`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
-        const data = await res.json();
-
-        if (res.ok && data.match) {
-            setStatus('success');
-            alert(`Welcome back, ${data.user_id || 'user'}! Attendance recorded.`);
-          
-            setTimeout(() => {
-              stopCamera();
-              clearCanvas();
-              setStatus('idle');
-              setIsDetecting(false);
-            });
-          }
+    
+        const data = res.data;
+    
+        if (res.status === 200 && data.match) {
+          setStatus('success');
+          alert(`Welcome back, ${data.user_id || 'user'}! Attendance recorded.`);
+    
+          setTimeout(() => {
+            stopCamera();
+            clearCanvas();
+            setStatus('idle');
+            setIsDetecting(false);
+          }, 1000);
+        }
       } catch (err) {
         console.error(err);
         setStatus('error');
