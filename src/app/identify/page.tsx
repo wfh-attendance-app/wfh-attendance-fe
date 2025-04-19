@@ -151,7 +151,7 @@ const IdentifyPage = () => {
   return (
     <GradientLayout>
       <ToastContainer autoClose={3000} />
-      <h2 className="text-2xl font-semibold mb-4">Facial Identification</h2>
+      <h2 className="text-2xl font-semibold mb-4">Record Attendance by Facial Identification</h2>
 
       <div className="relative w-[320px] h-[240px] mb-4">
         <video
