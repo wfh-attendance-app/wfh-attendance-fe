@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
 import apiConfig from '@/config/apiConfig';
+import GradientLayout from '@/components/GradientLayout';
 
 const IdentifyPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -144,7 +145,7 @@ const IdentifyPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4 text-black">
+    <GradientLayout>
       <h2 className="text-2xl font-semibold mb-4">Facial Identification</h2>
 
       <div className="relative w-[320px] h-[240px] mb-4">
@@ -177,7 +178,7 @@ const IdentifyPage = () => {
           Start
         </button>
       )}
-    </div>
+    </GradientLayout>
   );
 };
 

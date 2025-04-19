@@ -6,7 +6,7 @@ const LandingPage = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4">
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
       <h1 className="text-4xl font-bold mb-4 text-center">Welcome to WFH Attendance</h1>
       <p className="text-lg mb-10 text-center">Effortlessly manage attendance for remote teams.</p>
 
