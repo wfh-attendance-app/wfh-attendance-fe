@@ -126,7 +126,7 @@ const IdentifyPage = () => {
               clearCanvas();
               setStatus('idle');
               setIsDetecting(false);
-            }, 1000);
+            });
           }
       } catch (err) {
         console.error(err);
