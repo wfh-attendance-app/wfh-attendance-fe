@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
 import * as faceapi from 'face-api.js';
 import apiConfig from '@/config/apiConfig';
 import GradientLayout from '@/components/GradientLayout';
@@ -122,7 +123,7 @@ const IdentifyPage = () => {
     
         if (res.status === 200 && data.match) {
           setStatus('success');
-          alert(`Welcome back, ${data.user_id || 'user'}! Attendance recorded.`);
+          toast.success(`Welcome back, ${data.user_id || 'user'}! Attendance recorded.`, { position: "top-right", theme: "colored" });
     
           setTimeout(() => {
             stopCamera();
@@ -134,7 +135,7 @@ const IdentifyPage = () => {
       } catch (err) {
         console.error(err);
         setStatus('error');
-        alert('An error occurred during identification.');
+        toast.error('Failed to identify face. Please try again.', { position: "top-right", theme: "colored" });
       } finally {
         setIsLoading(false);
       }
@@ -149,6 +150,7 @@ const IdentifyPage = () => {
 
   return (
     <GradientLayout>
+      <ToastContainer autoClose={3000} />
       <h2 className="text-2xl font-semibold mb-4">Facial Identification</h2>
 
       <div className="relative w-[320px] h-[240px] mb-4">
