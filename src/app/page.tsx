@@ -10,7 +10,6 @@ const LandingPage = () => {
       <h1 className="text-4xl font-bold mb-4 text-center">Welcome to WFH Attendance</h1>
       <p className="text-lg mb-10 text-center">Effortlessly manage attendance for remote teams.</p>
 
-      {/* Auth Buttons */}
       <div className="flex space-x-6 mb-6">
         <button
           className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-gray-200 transition"
@@ -26,14 +25,11 @@ const LandingPage = () => {
         </button>
       </div>
 
-      {/* Separator */}
       <div className="flex items-center w-full max-w-xs mb-6">
         <hr className="flex-grow border-white opacity-30" />
         <span className="px-3 text-white text-sm opacity-80">or</span>
         <hr className="flex-grow border-white opacity-30" />
       </div>
-
-      {/* Identify Button */}
       <div>
         <button
           className="bg-green-500 px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-green-600 transition"

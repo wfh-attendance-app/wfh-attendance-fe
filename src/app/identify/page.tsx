@@ -135,7 +135,18 @@ const IdentifyPage = () => {
       } catch (err) {
         console.error(err);
         setStatus('error');
-        toast.error('Failed to identify face. Please try again.', { position: "top-right", theme: "colored" });
+        if (axios.isAxiosError(err) && err.response?.data?.error) {
+          toast.error(`Error: ${err.response.data.error}`, { position: "top-right", theme: "colored" });
+        } else {
+          toast.error('An unknown error occurred while identifying face.', { position: "top-right", theme: "colored" });
+        }
+
+        setTimeout(() => {
+          stopCamera();
+          clearCanvas();
+          setStatus('idle');
+          setIsDetecting(false);
+        }, 1000);
       } finally {
         setIsLoading(false);
       }
